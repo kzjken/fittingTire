@@ -3,10 +3,10 @@ import os
 import csv
 import itertools
 
-def askYN():
+def askYN(msg):
     answer = None
     while answer not in ("y", "n", "yes", "no"): 
-        answer = input("Process the tire folders: yes or no ? (y/n)") 
+        answer = input(msg) 
         if answer == "yes" or answer == "y" or answer == "Y": 
             return True
         elif answer == "no" or answer == "n" or answer == "N": 
@@ -81,25 +81,26 @@ def saveCSV(savePath, lstPar):
         writer = csv.writer(file)
         writer.writerows(list(itertools.zip_longest(*lstPar, fillvalue='')))     
 
-# ask for src folder
+##################################################################################################################################################
+# get src path
+##################################################################################################################################################
 srcPath = input("Source path = ")
 # srcPath = r'.\src'
 
 if not os.path.isdir(srcPath):
-    print(srcPath + ' is not a vailed path, please re-input.')
+    print(srcPath + ' is not a valid path, please re-input.')
     srcPath = input("Source path = ")
 
-lstTireFolder = glob.glob(srcPath + '\\*\\')
-# for item in lstTireFolder
-
-
-
 print('===================================================================================================================')
+lstTireFolder = glob.glob(srcPath + '\\*\\')
 for idx, folder in enumerate(lstTireFolder):
     print(str(idx + 1) + '. ' + folder)
-print(str(len(lstTireFolder)) + ' tire folders found.\n')
+print(str(len(lstTireFolder)) + ' tire folder(s) found.\n')
 
-processFlag = askYN()
+##################################################################################################################################################
+# process
+##################################################################################################################################################
+processFlag = askYN("Process the tire folder(s): yes or no ? (y/n)")
 if processFlag:
     for tireFolder in lstTireFolder:
         print('===================================================================================================================')
