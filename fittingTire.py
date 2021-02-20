@@ -32,7 +32,7 @@ def initCSV(lstPar):
 
 def buildCSV(txtPath, lstPar):
     # print(txtPath)
-    lstPar[0].append(os.path.basename(txtPath)[14:-4])
+    lstPar[0].append(os.path.basename(txtPath)[21:-4])
     with open(txtPath, 'r') as txtFile:
         lineCount = 0
         for line in txtFile: 
