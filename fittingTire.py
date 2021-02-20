@@ -3,6 +3,15 @@ import os
 import csv
 import itertools
 
+def getProcNo(msg):    
+    answer = input(msg) 
+    try:
+        return int(answer)
+    except ValueError:
+        print("Please input a number.")
+        getProcNo(msg)
+    
+
 def askYN(msg):
     answer = None
     while answer not in ("y", "n", "yes", "no"): 
@@ -99,13 +108,20 @@ print(str(len(lstTireFolder)) + ' tire folder(s) found.\n')
 ##################################################################################################################################################
 # process
 ##################################################################################################################################################
-processFlag = askYN("Process the tire folder(s): yes or no ? (y/n)")
-if processFlag:
-    for tireFolder in lstTireFolder:
+# processFlag = askYN("Process the tire folder(s): yes or no ? (y/n)")
+selectedFolderIdx = getProcNo("Please select a folder with index number (0 for all): ")
+
+procAllFlag = False
+if selectedFolderIdx == 0:
+    procAllFlag = True
+selectedFolderIdx -= 1
+
+for idx, tireFolder in enumerate(lstTireFolder):
+    if idx == selectedFolderIdx or procAllFlag:
         print('===================================================================================================================')
         print('processing ' + tireFolder)
         suffix = os.path.basename(tireFolder[:-1])[3:]
-        print('suffix= ' + suffix)
+        # print('suffix =' + suffix)
         saveFolder = os.path.abspath(os.path.join(tireFolder, '../..')) + '\\FittingTireRST\\' + suffix + '\\'
         print('saveFolder = ' + saveFolder)
         if not os.path.exists(saveFolder):
@@ -124,7 +140,7 @@ if processFlag:
             lstMax = []
 
             subfolderPrefix = subfolder[-2]
-            print(subfolderPrefix)
+            # print(subfolderPrefix)
 
             for txt in lstTxt:
                 # print(os.path.basename(txt))   
@@ -155,9 +171,9 @@ if processFlag:
                 lstCsvMax = buildCSV(txtMax, lstCsvMax)       
             saveCSV(saveFolder + subfolderPrefix + '_Max_' + suffix + '.csv', lstCsvMax)
             print(saveFolder + subfolderPrefix + '_Max_' + suffix + '.csv created.')
-    print('===================================================================================================================')
-    print(str(len(lstTireFolder)) + ' tire folders processed.')
-    
-    quitHold = input("press any key to quit") 
+print('===================================================================================================================')
+# print(str(len(lstTireFolder)) + ' tire folders processed.')
+
+quitHold = input("Press any key to quit.") 
 
 
