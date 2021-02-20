@@ -60,7 +60,7 @@ def buildCSV(txtPath, lstPar):
             if lineCount == 19:
                 slipRatio = line.split('=',)[1].split('\n',)[0]
                 lstPar[18].append(slipRatio)
-                lstPar[4].append(str(float(slipAngle) * 3.14159 / 180))
+                lstPar[4].append(str(float(slipRatio) * 3.14159 / 180))
                 # print(str(lineCount) + '. ' + line.split('=',)[0] + '=' + line.split('=',)[1].split('\n',)[0])              
             if lineCount == 20:
                 gaugePressure = line.split('=',)[1].split('\n',)[0]
