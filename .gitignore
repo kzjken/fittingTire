@@ -1,0 +1,7 @@
+fittingTire.spec
+build
+dist
+src
+rst
+__pycache__
+.vscode
