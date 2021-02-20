@@ -7,7 +7,7 @@ def askYN(msg):
     answer = None
     while answer not in ("y", "n", "yes", "no"): 
         answer = input(msg) 
-        if answer == "yes" or answer == "y" or answer == "Y": 
+        if answer == "yes" or answer == "y" or answer == "Y"  or answer == "enter": 
             return True
         elif answer == "no" or answer == "n" or answer == "N": 
             return False
@@ -84,12 +84,11 @@ def saveCSV(savePath, lstPar):
 ##################################################################################################################################################
 # get src path
 ##################################################################################################################################################
-srcPath = input("Source path = ")
-# srcPath = r'.\src'
-
-if not os.path.isdir(srcPath):
-    print(srcPath + ' is not a valid path, please re-input.')
-    srcPath = input("Source path = ")
+# srcPath = input("Source path = ")
+# if not os.path.isdir(srcPath):
+#     print(srcPath + ' is not a valid path, please re-input.')
+#     srcPath = input("Source path = ")
+srcPath = r'.\src'
 
 print('===================================================================================================================')
 lstTireFolder = glob.glob(srcPath + '\\*\\')
@@ -105,7 +104,8 @@ if processFlag:
     for tireFolder in lstTireFolder:
         print('===================================================================================================================')
         print('processing ' + tireFolder)
-        suffix = os.path.basename(tireFolder)[3:]
+        suffix = os.path.basename(tireFolder[:-1])[3:]
+        print('suffix= ' + suffix)
         saveFolder = os.path.abspath(os.path.join(tireFolder, '../..')) + '\\FittingTireRST\\' + suffix + '\\'
         print('saveFolder = ' + saveFolder)
         if not os.path.exists(saveFolder):
@@ -123,8 +123,8 @@ if processFlag:
             lstMin = []
             lstMax = []
 
-            subfolderPrefix = subfolder[-1]
-            # print(subfolderPrefix)
+            subfolderPrefix = subfolder[-2]
+            print(subfolderPrefix)
 
             for txt in lstTxt:
                 # print(os.path.basename(txt))   
@@ -157,3 +157,7 @@ if processFlag:
             print(saveFolder + subfolderPrefix + '_Max_' + suffix + '.csv created.')
     print('===================================================================================================================')
     print(str(len(lstTireFolder)) + ' tire folders processed.')
+    
+    quitHold = input("press any key to quit") 
+
+
