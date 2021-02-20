@@ -3,6 +3,17 @@ import os
 import csv
 import itertools
 
+def askYN():
+    answer = None
+    while answer not in ("y", "n", "yes", "no"): 
+        answer = input("Process the tire folders: yes or no ? (y/n)") 
+        if answer == "yes" or answer == "y" or answer == "Y": 
+            return True
+        elif answer == "no" or answer == "n" or answer == "N": 
+            return False
+        else: 
+            print("Please enter yes(y) or no(n)") 
+
 def initCSV(lstPar):
     lstTitle = ['TestNo.'], ['Long Vel (m/s)'], ['Rotation (rad/s)'], ['Slip Angle (rad)'], ['IA (rad)'], ['RI loaded'], ['Re effective rolling radius'], ['Gauge Pressure (Pa)'], ['Long Force (N)'], ['Lat Force (N)'], ['Vertical Force (N)'], ['Overturning Torque (Nm)'], ['Aligning Torque (Nm)'], ['Slip Ratio'], ['turn slip (1/m)'], ['Roll Resist Torque (Nm)'], [' '], ['Slip Angle (deg)'], ['Camber (deg)'], ['Gauge Pressure (kPa)'], ['Slip Ratio (%)'], 
     lstPar = []
@@ -71,70 +82,77 @@ def saveCSV(savePath, lstPar):
         writer.writerows(list(itertools.zip_longest(*lstPar, fillvalue='')))     
 
 # ask for src folder
-srcPath = ""
-try:
-    srcPath = input("Source path = ")
-except ValueError:
-    print("error input!")
-
+srcPath = input("Source path = ")
 # srcPath = r'.\src'
-lstTireFolder = glob.glob(srcPath + '\\*')
+
+if not os.path.isdir(srcPath):
+    print(srcPath + ' is not a vailed path, please re-input.')
+    srcPath = input("Source path = ")
+
+lstTireFolder = glob.glob(srcPath + '\\*\\')
+# for item in lstTireFolder
+
+
 
 print('===================================================================================================================')
-for folder in lstTireFolder:
-    print(folder)
-print(str(len(lstTireFolder)) + ' tire folders found.')
+for idx, folder in enumerate(lstTireFolder):
+    print(str(idx + 1) + '. ' + folder)
+print(str(len(lstTireFolder)) + ' tire folders found.\n')
 
-for tireFolder in lstTireFolder:
+processFlag = askYN()
+if processFlag:
+    for tireFolder in lstTireFolder:
+        print('===================================================================================================================')
+        print('processing ' + tireFolder)
+        suffix = os.path.basename(tireFolder)[3:]
+        saveFolder = os.path.abspath(os.path.join(tireFolder, '../..')) + '\\FittingTireRST\\' + suffix + '\\'
+        print('saveFolder = ' + saveFolder)
+        if not os.path.exists(saveFolder):
+            os.makedirs(saveFolder)
+
+        lstSubfolder = glob.glob(tireFolder + '\\*\\')
+        # print(lstSubfolder)
+
+        # glob all txt files in subfolder
+        for idx, subfolder in enumerate(lstSubfolder):
+            print('-------------------------------------------------------------------------------------------------------------------')
+            print("Processing " + subfolder)
+            lstTxt = glob.glob(subfolder + '\\**\\*.txt', recursive = True)    
+            lstAvg = []
+            lstMin = []
+            lstMax = []
+
+            subfolderPrefix = subfolder[-1]
+            # print(subfolderPrefix)
+
+            for txt in lstTxt:
+                # print(os.path.basename(txt))   
+                if 'Average' in os.path.basename(txt):
+                    lstAvg.append(txt)
+                if 'Minimum' in os.path.basename(txt):
+                    lstMin.append(txt)
+                if 'Maximum' in os.path.basename(txt):
+                    lstMax.append(txt)
+
+            lstCsvAvg = []
+            lstCsvAvg = initCSV(lstCsvAvg)
+            for txtAvg in lstAvg:
+                lstCsvAvg = buildCSV(txtAvg, lstCsvAvg)       
+            saveCSV(saveFolder + subfolderPrefix + '_Avg_' + suffix + '.csv', lstCsvAvg)
+            print(saveFolder + subfolderPrefix + '_Avg_' + suffix + '.csv created.')
+
+            lstCsvMin = []
+            lstCsvMin = initCSV(lstCsvMin)
+            for txtMin in lstMin:
+                lstCsvMin = buildCSV(txtMin, lstCsvMin)       
+            saveCSV(saveFolder + subfolderPrefix + '_Min_' + suffix + '.csv', lstCsvMin)
+            print(saveFolder + subfolderPrefix + '_Min_' + suffix + '.csv created.')
+
+            lstCsvMax = []
+            lstCsvMax = initCSV(lstCsvMax)
+            for txtMax in lstMax:
+                lstCsvMax = buildCSV(txtMax, lstCsvMax)       
+            saveCSV(saveFolder + subfolderPrefix + '_Max_' + suffix + '.csv', lstCsvMax)
+            print(saveFolder + subfolderPrefix + '_Max_' + suffix + '.csv created.')
     print('===================================================================================================================')
-    print('processing ' + tireFolder)
-    suffix = os.path.basename(tireFolder)[3:]
-    saveFolder = os.path.abspath(os.path.join(tireFolder, '../..')) + '\\rst\\' + suffix + '\\'
-    print('saveFolder = ' + saveFolder)
-    if not os.path.exists(saveFolder):
-        os.makedirs(saveFolder)
-
-    lstSubfolder = glob.glob(tireFolder + '\\*')
-    # print(lstSubfolder)
-
-    # glob all txt files in subfolder
-    for idx, subfolder in enumerate(lstSubfolder):
-        print('-------------------------------------------------------------------------------------------------------------------')
-        print("Processing " + subfolder)
-        lstTxt = glob.glob(subfolder + '\\**\\*.txt', recursive = True)    
-        lstAvg = []
-        lstMin = []
-        lstMax = []
-
-        subfolderPrefix = subfolder[-1]
-        # print(subfolderPrefix)
-
-        for txt in lstTxt:
-            # print(os.path.basename(txt))   
-            if 'Average' in os.path.basename(txt):
-                lstAvg.append(txt)
-            if 'Minimum' in os.path.basename(txt):
-                lstMin.append(txt)
-            if 'Maximum' in os.path.basename(txt):
-                lstMax.append(txt)
-
-        lstCsvAvg = []
-        lstCsvAvg = initCSV(lstCsvAvg)
-        for txtAvg in lstAvg:
-            lstCsvAvg = buildCSV(txtAvg, lstCsvAvg)       
-        saveCSV(saveFolder + subfolderPrefix + '_Avg_' + suffix + '.csv', lstCsvAvg)
-
-        lstCsvMin = []
-        lstCsvMin = initCSV(lstCsvMin)
-        for txtMin in lstMin:
-            lstCsvMin = buildCSV(txtMin, lstCsvMin)       
-        saveCSV(saveFolder + subfolderPrefix + '_Min_' + suffix + '.csv', lstCsvMin)
-
-        lstCsvMax = []
-        lstCsvMax = initCSV(lstCsvMax)
-        for txtMax in lstMax:
-            lstCsvMax = buildCSV(txtMax, lstCsvMax)       
-        saveCSV(saveFolder + subfolderPrefix + '_Max_' + suffix + '.csv', lstCsvMax)
-
-print('===================================================================================================================')
-print(str(len(lstTireFolder)) + ' tire folders processed.')
+    print(str(len(lstTireFolder)) + ' tire folders processed.')
