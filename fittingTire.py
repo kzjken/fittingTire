@@ -9,8 +9,7 @@ def getProcNo(msg):
         return int(answer)
     except ValueError:
         print("Please input a number.")
-        getProcNo(msg)
-    
+        getProcNo(msg)    
 
 def askYN(msg):
     answer = None
@@ -93,11 +92,11 @@ def saveCSV(savePath, lstPar):
 ##################################################################################################################################################
 # get src path
 ##################################################################################################################################################
-# srcPath = input("Source path = ")
-# if not os.path.isdir(srcPath):
-#     print(srcPath + ' is not a valid path, please re-input.')
-#     srcPath = input("Source path = ")
-srcPath = r'.\src'
+srcPath = input("Source path = ")
+if not os.path.isdir(srcPath):
+    print(srcPath + ' is not a valid path, please re-input.')
+    srcPath = input("Source path = ")
+# srcPath = r'.\src'
 
 print('===================================================================================================================')
 lstTireFolder = glob.glob(srcPath + '\\*\\')
