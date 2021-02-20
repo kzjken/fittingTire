@@ -2,6 +2,6 @@ fittingTire.spec
 build
 dist
 src
-rst
+FittingTireRST
 __pycache__
 .vscode
